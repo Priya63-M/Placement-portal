@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>College Placement Portal</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI}
+body{background:#0b1d26;color:white}
+
+nav{
+  display:flex;
+  justify-content:space-between;
+  padding:15px 40px;
+  background:#08141b;
+}
+nav h2{color:#00ffd5}
+nav ul{list-style:none;display:flex;gap:25px}
+nav ul li{cursor:pointer}
+nav ul li:hover{color:#00ffd5}
+
+section{display:none;min-height:90vh;padding:60px}
+.active{display:block}
+
+/* HOME */
+.home{
+  background:linear-gradient(135deg,#141e30,#243b55);
+  text-align:center;
+  padding-top:120px;
+}
+.home-btn{
+  margin-top:30px;
+  padding:15px 35px;
+  border:none;
+  border-radius:30px;
+  background:#00ffd5;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* JOB CARD */
+.jobs-page{background:#0b1f2a}
+.job-card{
+  background:rgba(255,255,255,0.08);
+  padding:20px;
+  border-radius:18px;
+  margin-bottom:20px;
+  display:flex;
+  justify-content:space-between;
+  border-left:6px solid #00ffd5;
+}
+.apply-btn{
+  padding:8px 20px;
+  border:none;
+  border-radius:20px;
+  background:#00ffd5;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* DETAILS */
+.details-page{background:linear-gradient(135deg,#1e3c72,#2a5298)}
+.details-box{
+  max-width:600px;
+  margin:40px auto;
+  background:rgba(255,255,255,0.15);
+  padding:35px;
+  border-radius:25px;
+}
+
+/* CONTACT */
+.contact{
+  background:linear-gradient(135deg,#1c1c3c,#2a5470);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.form{
+  background:rgba(255,255,255,0.15);
+  padding:40px;
+  border-radius:25px;
+  width:350px;
+}
+.form input,.form textarea{
+  width:100%;
+  margin:10px 0;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <h2>Placement Portal</h2>
+  <ul>
+    <li onclick="show('home')">Home</li>
+    <li onclick="show('companies')">Companies</li>
+    <li onclick="show('applied')">Applied Jobs</li>
+    <li onclick="show('contact')">Contact</li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="home active">
+  <h1 ondblclick="alert('Welcome to Placement Portal')">
+    Build Your Career 🚀
+  </h1>
+  <p>Explore companies and apply easily</p>
+  <button class="home-btn" onclick="show('companies')">
+    Explore Companies
+  </button>
+</section>
+
+<!-- COMPANIES -->
+<section id="companies" class="jobs-page">
+  <h1>Company Openings</h1><br>
+  <input type="text" placeholder="Search Company"
+    onkeyup="searchCompany(this.value)">
+  <br><br>
+  <div id="jobList"></div>
+</section>
+
+<!-- DETAILS -->
+<section id="details" class="details-page">
+  <button onclick="show('companies')">⬅ Back</button>
+  <div id="detailsBox"></div>
+</section>
+
+<!-- APPLIED -->
+<section id="applied" class="jobs-page">
+  <h1>Applied Jobs</h1><br>
+  <div id="appliedList"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <form class="form" onsubmit="submitContact(event)">
+    <h2>Contact Us</h2>
+
+    <input type="text" placeholder="Name" required
+      onfocus="this.style.background='#ddd'"
+      onblur="this.style.background='white'">
+
+    <input type="email" placeholder="Email" required>
+    <textarea placeholder="Message" required></textarea>
+
+    <button class="apply-btn" type="submit">Send</button>
+  </form>
+</section>
+
+<script>
+/* NAV */
+function show(id){
+  document.querySelectorAll("section")
+  .forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* DATA */
+const companies=[
+ {id:1,name:"TCS",role:"Developer",pkg:"4 LPA",elig:60},
+ {id:2,name:"Infosys",role:"Tester",pkg:"3.6 LPA",elig:65},
+ {id:3,name:"Wipro",role:"Support Engineer",pkg:"5 LPA",elig:60},
+ {id:4,name:"Zoho",role:"Frontend Developer",pkg:"6 LPA",elig:70},
+ {id:5,name:"Accenture",role:"Analyst",pkg:"4.5 LPA",elig:65}
+];
+
+let applied=[];
+
+/* RENDER */
+function render(list){
+  jobList.innerHTML="";
+  list.forEach(c=>{
+    jobList.innerHTML+=`
+      <div class="job-card"
+        onmouseover="this.style.background='#123'"
+        onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+        <div>
+          <h3>${c.name}</h3>
+          <p>${c.role}</p>
+          <p>${c.pkg}</p>
+        </div>
+        <button class="apply-btn"
+          onclick="openDetails(${c.id})">
+          View Details
+        </button>
+      </div>
+    `;
+  });
+}
+
+/* SEARCH */
+function searchCompany(txt){
+  let res = companies.filter(c =>
+    c.name.toLowerCase().includes(txt.toLowerCase())
+  );
+  render(res);
+}
+
+/* DETAILS */
+function openDetails(id){
+  let c = companies.find(x=>x.id===id);
+  detailsBox.innerHTML=`
+    <div class="details-box">
+      <h2>${c.name}</h2>
+      <p>Role: ${c.role}</p>
+      <p>Package: ${c.pkg}</p>
+      <p>Eligibility: ${c.elig}%</p><br>
+      <button class="apply-btn"
+        onclick="applyJob('${c.name}',${c.elig})">
+        Apply Now
+      </button>
+    </div>
+  `;
+  show('details');
+}
+
+/* APPLY */
+function applyJob(name,elig){
+  let per = prompt("Enter your percentage");
+
+  if(per < elig){
+    alert("❌ Not Eligible");
+    return;
+  }
+  if(applied.includes(name)){
+    alert("⚠️ Already Applied");
+    return;
+  }
+
+  applied.push(name);
+  alert("✅ Applied Successfully");
+  renderApplied();
+}
+
+/* APPLIED LIST */
+function renderApplied(){
+  appliedList.innerHTML="";
+  if(applied.length===0){
+    appliedList.innerHTML="<p>No applied jobs</p>";
+    return;
+  }
+
+  applied.forEach((j,i)=>{
+    appliedList.innerHTML+=`
+      <div class="job-card">
+        <h3>${j}</h3>
+        <button class="apply-btn"
+          style="background:red"
+          onclick="deleteJob(${i})">
+          Withdraw
+        </button>
+      </div>
+    `;
+  });
+}
+
+/* DELETE */
+function deleteJob(i){
+  if(confirm("Are you sure you want to withdraw?")){
+    applied.splice(i,1);
+    alert("🗑️ Application withdrawn");
+    renderApplied();
+  }
+}
+
+/* CONTACT SUBMIT */
+function submitContact(e){
+  e.preventDefault();
+
+  let ok = confirm("Are you sure you want to submit?");
+  if(ok){
+    alert("📩 Message sent successfully");
+    e.target.reset();   // RESET FORM
+  }else{
+    alert("❌ Submission cancelled");
+  }
+}
+
+render(companies);
+</script>
+
+</body>
+</html>
